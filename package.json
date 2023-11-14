@@ -1,0 +1,20 @@
+{
+  "name": "@aiswarm/ui-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "keywords": ["ai_so:plugin"],
+  "scripts": {
+    "start": "echo \"No start script\" && exit 1",
+    "test": "c8 ava test/*.js -w"
+  },
+  "author": "Ravi Gairola <mallox@pyxzl.net",
+  "license": "MIT",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "ava": "^5.3.1",
+    "c8": "^8.0.1"
+  }
+}
