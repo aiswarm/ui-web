@@ -4,17 +4,64 @@
   "description": "",
   "main": "index.js",
   "type": "module",
-  "keywords": ["ai_so:plugin"],
-  "scripts": {
-    "start": "echo \"No start script\" && exit 1",
-    "test": "c8 ava test/*.js -w"
-  },
+  "keywords": [
+    "ai_so:plugin"
+  ],
   "author": "Ravi Gairola <mallox@pyxzl.net",
   "license": "MIT",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "test": "jest --coverage test/",
+    "postinstall": "npm run build"
+  },
   "dependencies": {
+    "@apollo/client": "^3.8.7",
+    "@vue/apollo-composable": "^4.0.0-beta.11",
+    "core-js": "^3.8.3",
+    "cors": "^2.8.5",
+    "graphql": "^16.8.1",
+    "graphql-tag": "^2.12.6",
+    "polka": "^0.5.2",
+    "sirv": "^2.0.3",
+    "vue": "^3.2.13",
+    "vue-router": "^4.0.13"
   },
   "devDependencies": {
-    "ava": "^5.3.1",
-    "c8": "^8.0.1"
-  }
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "jest": "^27.0.6",
+    "pug": "^3.0.2",
+    "pug-plain-loader": "^1.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "stylus": "^0.61.0",
+    "stylus-loader": "^7.1.3"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "@babel/eslint-parser"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 5%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
 }
