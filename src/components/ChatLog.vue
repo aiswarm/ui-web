@@ -6,12 +6,12 @@ div
 </template>
 
 <script setup>
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useSubscription } from "@vue/apollo-composable";
 import { gql } from "@apollo/client/core";
 import { ref, watchEffect } from "vue";
 
-// eslint-disable-next-line no-unused-vars
-const { result: messagesResult, onResult: onMessagesResult } = useQuery(
+// Query for getting the initial messages
+const { result: messagesResult } = useQuery(
   gql`
     query {
       messages {
@@ -22,14 +22,40 @@ const { result: messagesResult, onResult: onMessagesResult } = useQuery(
   `
 );
 
+// Subscription for getting new messages
+const { result: newMessageResult } = useSubscription(
+  gql`
+    subscription {
+      messageSent {
+        id
+        content
+      }
+    }
+  `
+);
+
 const messages = ref([]);
 
 watchEffect(() => {
-  onMessagesResult((result) => {
-    if (result.data) {
-      messages.value = result.data.messages;
+  // Update messages with the initial data
+  if (messagesResult.value?.messages) {
+    messagesResult.value.messages.forEach((message) => {
+      if (!messages.value.find((m) => m.id === message.id)) {
+        messages.value.push(message);
+      }
+    });
+  }
+
+  // Update messages with the new message
+  if (newMessageResult.value?.messageSent) {
+    if (
+      !messages.value.find(
+        (m) => m.id === newMessageResult.value.messageSent.id
+      )
+    ) {
+      messages.value.push(newMessageResult.value.messageSent);
     }
-  });
+  }
 });
 </script>
 
