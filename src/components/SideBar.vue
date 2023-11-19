@@ -9,9 +9,9 @@ div
 </template>
 
 <script setup>
-import { useQuery } from "@vue/apollo-composable";
-import { gql } from "@apollo/client/core";
-import { ref, watchEffect } from "vue";
+import { useQuery } from '@vue/apollo-composable'
+import { gql } from '@apollo/client/core'
+import { ref, watchEffect } from 'vue'
 
 // eslint-disable-next-line no-unused-vars
 const { result: groupsResult, onResult: onGroupsResult } = useQuery(
@@ -22,7 +22,7 @@ const { result: groupsResult, onResult: onGroupsResult } = useQuery(
       }
     }
   `
-);
+)
 // eslint-disable-next-line no-unused-vars
 const { result: agentsResult, onResult: onAgentsResult } = useQuery(
   gql`
@@ -32,26 +32,26 @@ const { result: agentsResult, onResult: onAgentsResult } = useQuery(
       }
     }
   `
-);
+)
 
-const groups = ref([]);
-const agents = ref([]);
+const groups = ref([])
+const agents = ref([])
 
 watchEffect(() => {
   onGroupsResult((result) => {
     if (result.data) {
-      groups.value = result.data.groups;
+      groups.value = result.data.groups
     }
-  });
-});
+  })
+})
 
 watchEffect(() => {
   onAgentsResult((result) => {
     if (result.data) {
-      agents.value = result.data.agents;
+      agents.value = result.data.agents
     }
-  });
-});
+  })
+})
 </script>
 
 <style lang="stylus"></style>
