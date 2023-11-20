@@ -24,6 +24,11 @@ const wsLink = new WebSocketLink({
   uri: 'ws://localhost:4000/graphql',
   options: {
     reconnect: true,
+    connectionCallback: (error) => {
+      if (error) {
+        console.error(`WebSocket connection error: ${error}`)
+      }
+    },
   },
 })
 
