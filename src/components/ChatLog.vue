@@ -1,7 +1,6 @@
 <template lang="pug">
 div.chat-log
   v-app-bar(app color="primary" dark)
-    v-app-bar-nav-icon(@click="$root.$emit('toggle-drawer')" hide-on-desktop)
     v-toolbar-title Chat Application
   ul(v-if="messages.length")
     li(v-for="(message, index) in messages" :key="message.id" :ref="setLastMessageRef") {{ message.content }}
@@ -12,7 +11,7 @@ import { useQuery, useSubscription } from '@vue/apollo-composable'
 import { inject, nextTick, ref, watchEffect } from 'vue'
 import { gql } from '@apollo/client/core'
 
-// Query for getting the initial messages
+// Query for getting the initial messagesq
 const { result: messagesResult } = useQuery(
   gql`
     query {

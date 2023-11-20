@@ -27,8 +27,8 @@ import { inject, ref } from 'vue'
 
 const { mutate: sendMessageMutation } = useMutation(
   gql`
-    mutation SendMessage($message: String!) {
-      sendMessage(message: $message) {
+    mutation SendMessage($message: String!, $target: String!) {
+      sendMessage(message: $message, target: $target) {
         id
         content
       }
@@ -40,8 +40,12 @@ const preferences = inject('preferences')
 const menu = ref(false)
 
 async function sendMessage() {
-  if (typeof message.value === 'string' && message.value.trim() !== '') {
-    await sendMessageMutation({ message: message.value })
+  if (
+    message.value &&
+    typeof message.value === 'string' &&
+    message.value.trim() !== ''
+  ) {
+    await sendMessageMutation({ message: message.value, target: 'all' })
     message.value = ''
   }
 }
