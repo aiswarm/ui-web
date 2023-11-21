@@ -1,15 +1,25 @@
 <template lang="pug">
 div.chat-log
   v-app-bar(app color="primary" dark)
-    v-toolbar-title Chat Application
-  ul(v-if="messages.length")
-    li(v-for="(message, index) in messages" :key="message.id" :ref="setLastMessageRef") {{ message.content }}
+    v-toolbar-title {{ selected ? selected.name : 'AI Swarm Orchestrator' }}
+  div(v-if="!selected || !selected.name")
+    p Select an agent or group to view the chat log.
+  div(v-else)
+    ul(v-if="messages.length")
+      li(v-for="(message, index) in messages" :key="message.id" :ref="setLastMessageRef") {{ message.content }}
 </template>
 
 <script setup>
 import { useQuery, useSubscription } from '@vue/apollo-composable'
-import { inject, nextTick, ref, watchEffect } from 'vue'
+import { defineProps, inject, nextTick, ref, watchEffect } from 'vue'
 import { gql } from '@apollo/client/core'
+
+const props = defineProps({
+  selected: {
+    type: Object,
+    default: () => ({}),
+  },
+})
 
 // Query for getting the initial messagesq
 const { result: messagesResult } = useQuery(
