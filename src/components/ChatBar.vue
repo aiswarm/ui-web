@@ -1,9 +1,10 @@
 <template lang="pug">
 v-row(no-gutters align="end")
   v-col(cols="11")
-    v-textarea(v-model="message" label="Message" auto-grow :rows="1" :max-rows="5" @keydown.enter="handleEnter")
+    v-snackbar(v-model="snackbar" color="error" :timeout="3000" close-on-content-click=true location="top" ) Cannot send message to all agents, please select an agent or group
+    v-textarea(id="messageInput" v-model="messageInput" label="Message" auto-grow :rows="1" :max-rows="5" @keydown.enter="handleEnter" :disabled="!enabled" clearable=true )
   v-col(cols="1" class="d-flex align-center justify-space-between")
-    v-btn(icon @click="sendMessage" class="btn")
+    v-btn(icon @click="sendMessage" class="btn" :disabled="!enabled")
       v-icon mdi-send
     v-menu(v-model="menu" :close-on-content-click="false" offset-y)
       template(v-slot:activator="{ props }")
@@ -21,9 +22,17 @@ v-row(no-gutters align="end")
 </template>
 
 <script setup>
+import { inject, ref, watch } from 'vue'
 import { useMutation } from '@vue/apollo-composable'
 import { gql } from '@apollo/client/core'
-import { inject, ref } from 'vue'
+
+const targetSelected = inject('targetSelected')
+const preferences = inject('preferences')
+
+const messageInput = ref('')
+const menu = ref(false)
+const enabled = ref(true)
+const snackbar = ref(false)
 
 const { mutate: sendMessageMutation } = useMutation(
   gql`
@@ -35,28 +44,26 @@ const { mutate: sendMessageMutation } = useMutation(
     }
   `
 )
-const message = ref('')
-const preferences = inject('preferences')
-const menu = ref(false)
 
-async function sendMessage() {
-  if (
-    message.value &&
-    typeof message.value === 'string' &&
-    message.value.trim() !== ''
-  ) {
-    await sendMessageMutation({ message: message.value, target: 'all' })
-    message.value = ''
-  }
-}
+watch(targetSelected.value, (value) => {
+  enabled.value = !(!value || value.name === 'all')
+})
 
-function handleEnter(event) {
+async function handleEnter(event) {
+  event.preventDefault()
   if (event.altKey || event.metaKey || event.shiftKey) {
-    event.preventDefault()
-    message.value += '\n'
-  } else {
-    event.preventDefault()
-    sendMessage()
+    messageInput.value += '\n'
+    return
+  }
+  const target = targetSelected.value.name
+  if (target === 'all') {
+    snackbar.value = true
+    return
+  }
+  const message = messageInput.value
+  if (message.trim && message.trim() !== '' && target) {
+    await sendMessageMutation({ message, target })
+    messageInput.value = ''
   }
 }
 </script>
