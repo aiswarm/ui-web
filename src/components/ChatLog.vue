@@ -1,55 +1,23 @@
 <template lang="pug">
+v-app-bar(app color="primary" dark)
+  v-toolbar-title {{ targetSelected?.name || 'all' }}
 div.chat-log
-  v-app-bar(app color="primary" dark)
-    v-toolbar-title {{ selected ? selected.name : 'AI Swarm Orchestrator' }}
-  div(v-if="!selected || !selected.name")
-    p Select an agent or group to view the chat log.
-  div(v-else)
-    ul(v-if="messages.length")
-      li(v-for="(message, index) in messages" :key="message.id" :ref="setLastMessageRef") {{ message.content }}
+  ul(v-if="localMessages.length")
+    li(v-for="(messageInput, index) in localMessages" :key="messageInput.id" :ref="setLastMessageRef")
+      span.source {{ messageInput.source }}:
+      span.content {{ messageInput.content }}
+      span.timestamp {{ new Date(messageInput.timestamp).toLocaleTimeString() }}
 </template>
 
 <script setup>
-import { useQuery, useSubscription } from '@vue/apollo-composable'
-import { defineProps, inject, nextTick, ref, watchEffect } from 'vue'
-import { gql } from '@apollo/client/core'
+import { inject, nextTick, ref, watchEffect } from 'vue'
 
-const props = defineProps({
-  selected: {
-    type: Object,
-    default: () => ({}),
-  },
-})
+const messages = inject('messages')
+const targetSelected = inject('targetSelected')
 
-// Query for getting the initial messagesq
-const { result: messagesResult } = useQuery(
-  gql`
-    query {
-      messages {
-        id
-        content
-      }
-    }
-  `
-)
-
-// Subscription for getting new messages
-const { result: newMessageResult } = useSubscription(
-  gql`
-    subscription {
-      messageSent {
-        id
-        content
-      }
-    }
-  `
-)
-
-const messages = ref([])
+const localMessages = ref([])
 const lastMessage = ref(null)
-const preferences = inject('preferences')
 
-// eslint-disable-next-line no-unused-vars
 const setLastMessageRef = (el) => {
   if (el) {
     lastMessage.value = el
@@ -57,37 +25,40 @@ const setLastMessageRef = (el) => {
 }
 
 watchEffect(() => {
-  // Update messages with the initial data
-  if (messagesResult.value?.messages) {
-    messagesResult.value.messages.forEach((message) => {
-      if (!messages.value.find((m) => m.id === message.id)) {
-        messages.value.push(message)
-      }
-    })
-  }
+  localMessages.value = messages.value.filter(
+    (message) =>
+      targetSelected.value?.name === 'all' ||
+      message.target === targetSelected.value?.name ||
+      message.source === targetSelected.value?.name
+  )
 
-  // Update messages with the new message
-  if (newMessageResult.value?.messageSent) {
-    if (
-      !messages.value.find(
-        (m) => m.id === newMessageResult.value.messageSent.id
-      )
-    ) {
-      messages.value.push(newMessageResult.value.messageSent)
+  nextTick(() => {
+    if (lastMessage.value) {
+      lastMessage.value.scrollIntoView()
     }
-    nextTick(() => {
-      if (lastMessage.value && preferences.scrollOnMessage) {
-        lastMessage.value.scrollIntoView({ behavior: 'smooth' })
-      }
-    })
-  }
+  })
 })
 </script>
 
 <style lang="stylus">
 .chat-log
-  height 100%
+  bottom 0
+  padding-bottom 100px
   overflow-y auto
+  scroll-behavior smooth
+  height 100%
   display flex
   flex-direction column-reverse
+  position fixed
+
+.source
+  font-weight bold
+  margin-right 10px
+
+.content
+  margin-right 10px
+
+.timestamp
+  font-size 0.8em
+  color gray
 </style>
