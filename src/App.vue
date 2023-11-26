@@ -3,7 +3,7 @@ v-app
   v-navigation-drawer(v-model="drawer" app)
     Sidebar
   v-main
-    v-container(fluid)
+    v-container(fluid="true")
       v-row
         v-col(cols="12")
           v-row(height="100%" justify="center" align="center")
@@ -30,7 +30,7 @@ export default {
     const messages = ref([])
     const agents = ref([])
     const drivers = ref([])
-    const targetSelected = ref({ type: 'group', name: 'all' })
+    const targetSelected = ref({ type: 'group', name: 'All' })
     const { result: newMessageResult } = useSubscription(
       gql`
         subscription {

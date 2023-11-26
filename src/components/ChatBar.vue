@@ -46,7 +46,7 @@ const { mutate: sendMessageMutation } = useMutation(
 )
 
 watch(targetSelected.value, (value) => {
-  enabled.value = !(!value || value.name === 'all')
+  enabled.value = !(!value || value.name === 'All')
 })
 
 async function handleEnter(event) {
@@ -56,7 +56,7 @@ async function handleEnter(event) {
     return
   }
   const target = targetSelected.value.name
-  if (target === 'all') {
+  if (target === 'All') {
     snackbar.value = true
     return
   }
