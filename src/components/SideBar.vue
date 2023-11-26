@@ -12,7 +12,7 @@ v-card
           v-card-title
             span.headline Add Group
           v-card-text
-            v-text-field(v-model="newGroupName" label="Group Name")
+            v-text-field(v-model="newGroupName" label="Group Name" autofocus="true")
           v-card-actions
             v-spacer
             v-btn(text @click="showAddGroupDialog = false") Cancel
@@ -29,7 +29,7 @@ v-card
           v-card-title
             span.headline Add Agent
           v-card-text
-            v-text-field(v-model="newAgentName" label="Agent Name")
+            v-text-field(v-model="newAgentName" label="Agent Name" autofocus="true")
             v-select(v-model="selectedDriver" :items="drivers" label="Driver")
           v-card-actions
             v-spacer
@@ -44,7 +44,7 @@ import { gql } from '@apollo/client/core'
 
 const targetSelected = inject('targetSelected')
 
-const defaultGroup = { name: 'all', type: 'group' }
+const defaultGroup = { name: 'All', type: 'group' }
 const groups = ref([defaultGroup])
 const agents = inject('agents')
 const drivers = inject('drivers')
@@ -213,6 +213,12 @@ const showAddAgentDialog = ref(false)
 const newAgentName = ref('')
 const selectedDriver = ref('')
 
+watch(showAddAgentDialog, (newValue) => {
+  if (newValue && drivers.value.length === 1) {
+    selectedDriver.value = drivers.value[0]
+  }
+})
+
 async function addAgent() {
   if (newAgentName.value.trim() !== '' && selectedDriver.value) {
     await addAgentMutation({
@@ -231,6 +237,9 @@ h3 {
   margin: 10px 10px 0
 }
 
+.selected-chat {
+  font-weight: bold
+}
 
 .badge > .v-list-item__content
   overflow visible !important

@@ -1,6 +1,6 @@
 <template lang="pug">
 v-app-bar(app color="primary" dark)
-  v-toolbar-title {{ targetSelected?.name || 'all' }}
+  v-toolbar-title {{ targetSelected?.name || 'All' }}
 div.chat-log
   ul(v-if="localMessages.length")
     li(v-for="(messageInput, index) in localMessages" :key="messageInput.id" :ref="setLastMessageRef")
@@ -27,7 +27,7 @@ const setLastMessageRef = (el) => {
 watchEffect(() => {
   localMessages.value = messages.value.filter(
     (message) =>
-      targetSelected.value?.name === 'all' ||
+      targetSelected.value?.name === 'All' ||
       message.target === targetSelected.value?.name ||
       message.source === targetSelected.value?.name
   )
