@@ -16,22 +16,22 @@ v-app
 import Sidebar from './components/SideBar.vue'
 import ChatLog from './components/ChatLog.vue'
 import ChatBar from './components/ChatBar.vue'
-import { useSubscription } from '@vue/apollo-composable'
-import { gql } from '@apollo/client/core'
-import { provide, ref, watchEffect } from 'vue'
+import {useSubscription} from '@vue/apollo-composable'
+import {gql} from '@apollo/client/core'
+import {provide, ref, watchEffect} from 'vue'
 
 export default {
   components: {
     Sidebar,
     ChatLog,
-    ChatBar,
+    ChatBar
   },
   setup() {
     const messages = ref([])
     const agents = ref([])
     const drivers = ref([])
-    const targetSelected = ref({ type: 'group', name: 'All' })
-    const { result: newMessageResult } = useSubscription(
+    const targetSelected = ref({type: 'group', name: 'All'})
+    const {result: newMessageResult} = useSubscription(
       gql`
         subscription {
           messageCreated {
@@ -58,7 +58,14 @@ export default {
     provide('targetSelected', targetSelected)
   },
   data: () => ({
-    drawer: null,
-  }),
+    drawer: null
+  })
 }
 </script>
+
+<style lang="stylus">
+.v-footer
+  position fixed
+  bottom 0
+  width 100%
+</style>

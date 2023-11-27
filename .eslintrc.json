@@ -3,7 +3,8 @@
   "parserOptions": {
     "parser": "@babel/eslint-parser",
     "requireConfigFile": false,
-    "sourceType": "module"
+    "sourceType": "module",
+    "ecmaVersion": 12
   },
   "plugins": [
     "vue"

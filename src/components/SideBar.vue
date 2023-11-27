@@ -38,13 +38,13 @@ v-card
 </template>
 
 <script setup>
-import { inject, ref, watch } from 'vue'
-import { useMutation, useQuery, useSubscription } from '@vue/apollo-composable'
-import { gql } from '@apollo/client/core'
+import {inject, ref, watch} from 'vue'
+import {useMutation, useQuery, useSubscription} from '@vue/apollo-composable'
+import {gql} from '@apollo/client/core'
 
 const targetSelected = inject('targetSelected')
 
-const defaultGroup = { name: 'All', type: 'group' }
+const defaultGroup = {name: 'All', type: 'group'}
 const groups = ref([defaultGroup])
 const agents = inject('agents')
 const drivers = inject('drivers')
@@ -73,7 +73,7 @@ useQuery(
     groups.value.push({
       ...group,
       count: 0,
-      lastSeen: 0,
+      lastSeen: 0
     })
   })
   agents.value = []
@@ -81,7 +81,7 @@ useQuery(
     agents.value.push({
       ...agent,
       count: 0,
-      lastSeen: 0,
+      lastSeen: 0
     })
   })
   drivers.value = []
@@ -112,7 +112,7 @@ useSubscription(
       groups.value.push({
         ...newGroup,
         count: 0,
-        lastSeen: 0,
+        lastSeen: 0
       })
     }
   }
@@ -135,7 +135,7 @@ useSubscription(
       agents.value.push({
         ...newAgent,
         count: 0,
-        lastSeen: 0,
+        lastSeen: 0
       })
     }
   }
@@ -166,7 +166,7 @@ watch(messages.value, (messages) => {
 // Actions in this component
 
 const selectChat = (name, type) => {
-  targetSelected.value = { name, type }
+  targetSelected.value = {name, type}
   selected.value = [name]
   const agent =
     agents.value.find((agent) => agent.name === name) ??
@@ -178,7 +178,7 @@ const selectChat = (name, type) => {
 
 // Groups
 
-const { mutate: addGroupMutation } = useMutation(
+const {mutate: addGroupMutation} = useMutation(
   gql`
     mutation CreateGroup($name: String!) {
       createGroup(name: $name)
@@ -191,7 +191,7 @@ const newGroupName = ref('')
 
 async function addGroup() {
   if (newGroupName.value.trim() !== '') {
-    await addGroupMutation({ name: newGroupName.value })
+    await addGroupMutation({name: newGroupName.value})
     showAddGroupDialog.value = false
     newGroupName.value = ''
   }
@@ -199,7 +199,7 @@ async function addGroup() {
 
 // Agents
 
-const { mutate: addAgentMutation } = useMutation(
+const {mutate: addAgentMutation} = useMutation(
   gql`
     mutation CreateAgent($name: String!, $driver: String!) {
       createAgent(name: $name, driver: $driver) {
@@ -223,7 +223,7 @@ async function addAgent() {
   if (newAgentName.value.trim() !== '' && selectedDriver.value) {
     await addAgentMutation({
       name: newAgentName.value,
-      driver: selectedDriver.value,
+      driver: selectedDriver.value
     })
     showAddAgentDialog.value = false
     newAgentName.value = ''
