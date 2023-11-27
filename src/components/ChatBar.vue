@@ -1,7 +1,7 @@
 <template lang="pug">
 v-row(no-gutters align="end")
   v-col(cols="11")
-    v-snackbar(v-model="snackbar" color="error" :timeout="3000" close-on-content-click=true location="top" ) Cannot send message to all agents, please select an agent or group
+    v-snackbar(v-model="snackbar" color="error" :timeout="3000" close-on-content-click=true location="top" ) Cannot send message to map agents, please select an agent or group
     v-textarea(id="messageInput" v-model="messageInput" label="Message" auto-grow :rows="1" :max-rows="5" @keydown.enter="handleEnter" :disabled="!enabled" clearable=true )
   v-col(cols="1" class="d-flex align-center justify-space-between")
     v-btn(icon @click="sendMessage" class="btn" :disabled="!enabled")
@@ -22,9 +22,9 @@ v-row(no-gutters align="end")
 </template>
 
 <script setup>
-import { inject, ref, watch } from 'vue'
-import { useMutation } from '@vue/apollo-composable'
-import { gql } from '@apollo/client/core'
+import {inject, ref, watch} from 'vue'
+import {useMutation} from '@vue/apollo-composable'
+import {gql} from '@apollo/client/core'
 
 const targetSelected = inject('targetSelected')
 const preferences = inject('preferences')
@@ -34,7 +34,7 @@ const menu = ref(false)
 const enabled = ref(true)
 const snackbar = ref(false)
 
-const { mutate: sendMessageMutation } = useMutation(
+const {mutate: sendMessageMutation} = useMutation(
   gql`
     mutation SendMessage($message: String!, $target: String!) {
       sendMessage(message: $message, target: $target) {
@@ -62,18 +62,13 @@ async function handleEnter(event) {
   }
   const message = messageInput.value
   if (message.trim && message.trim() !== '' && target) {
-    await sendMessageMutation({ message, target })
+    await sendMessageMutation({message, target})
     messageInput.value = ''
   }
 }
 </script>
 
 <style lang="stylus">
-.v-footer
-  position fixed
-  bottom 0
-  width 100%
-
 .btn
   margin-bottom 25px
   margin-left 10px

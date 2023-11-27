@@ -7,17 +7,17 @@ import path from 'path'
 import polka from 'polka'
 import sirv from 'sirv'
 import cors from 'cors'
-import { promisify } from 'util'
+import {promisify} from 'util'
 import fs from 'fs'
 
 export async function startServer(log, port = 3000) {
   const app = polka()
 
-  // Enable CORS for all origins
+  // Enable CORS for map origins
   app.use(cors())
 
   // Serve static files from the specified directory
-  const staticDir = path.join(process.cwd(), '/plugins/ui-web/dist')
+  const staticDir = path.join(process.cwd(), 'node_modules/@aiswarm/ui-web/dist')
   if (!fs.existsSync(staticDir)) {
     throw new Error(
       'Could not find UI files, please run \'npm run build\' in the ui-web directory first.'
