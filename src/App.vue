@@ -1,65 +1,60 @@
 <template lang="pug">
 v-app
-  v-navigation-drawer(v-model="drawer" app)
-    Sidebar
-  v-main
-    v-container(fluid="true")
-      v-row
-        v-col(cols="12")
-          v-row(height="100%" justify="center" align="center")
-            ChatLog
-  v-footer(app).fixed.bottom
-    ChatBar
+    v-navigation-drawer(v-model="drawer" app)
+        Sidebar
+    v-main
+        v-container(fluid=true)
+            v-row
+                v-col(cols="12")
+                    v-row(height="100%" justify="center" align="center")
+                        ChatLog
+    v-footer(app).fixed.bottom
+        ChatBar
 </template>
 
 <script>
 import Sidebar from './components/SideBar.vue'
 import ChatLog from './components/ChatLog.vue'
 import ChatBar from './components/ChatBar.vue'
-import {useSubscription} from '@vue/apollo-composable'
-import {gql} from '@apollo/client/core'
-import {provide, ref, watchEffect} from 'vue'
+import {
+    agents,
+    defaultGroup,
+    drivers,
+    groups,
+    loadCurrentState,
+    message,
+    messages,
+    subscribeToAgents,
+    subscribeToGroups,
+    subscribeToMessages
+} from './subscriptions.js'
+import {provide, ref} from 'vue'
 
 export default {
-  components: {
-    Sidebar,
-    ChatLog,
-    ChatBar
-  },
-  setup() {
-    const messages = ref([])
-    const agents = ref([])
-    const drivers = ref([])
-    const targetSelected = ref({type: 'group', name: 'All'})
-    const {result: newMessageResult} = useSubscription(
-      gql`
-        subscription {
-          messageCreated {
-            id
-            timestamp
-            source
-            target
-            content
-            type
-          }
-        }
-      `
-    )
+    components: {
+        Sidebar,
+        ChatLog,
+        ChatBar
+    },
+    setup() {
+        const targetSelected = ref({type: 'group', name: defaultGroup})
 
-    watchEffect(() => {
-      if (newMessageResult.value?.messageCreated) {
-        messages.value.push(newMessageResult.value.messageCreated)
-      }
+        loadCurrentState()
+        subscribeToGroups()
+        subscribeToAgents()
+        subscribeToMessages()
+
+        provide('messages', messages)
+        provide('message', message)
+        provide('agents', agents)
+        provide('groups', groups)
+        provide('defaultGroup', defaultGroup)
+        provide('drivers', drivers)
+        provide('targetSelected', targetSelected)
+    },
+    data: () => ({
+        drawer: null
     })
-
-    provide('messages', messages)
-    provide('agents', agents)
-    provide('drivers', drivers)
-    provide('targetSelected', targetSelected)
-  },
-  data: () => ({
-    drawer: null
-  })
 }
 </script>
 
