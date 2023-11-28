@@ -1,16 +1,17 @@
 <template lang="pug">
 v-app-bar(app color="primary" dark)
-  v-toolbar-title {{ targetSelected?.name || 'All' }}
+    v-toolbar-title {{ targetSelected?.name || defaultGroup }}
 div.chat-log
-  ul(v-if="localMessages.length")
-    li(v-for="(messageInput, index) in localMessages" :key="messageInput.id" :ref="setLastMessageRef")
-      span.source {{ messageInput.source }}:
-      span.content {{ messageInput.content }}
-      span.timestamp {{ new Date(messageInput.timestamp).toLocaleTimeString() }}
+    ul(v-if="localMessages.length")
+        li(v-for="(messageInput, index) in localMessages" :key="messageInput.id" :ref="setLastMessageRef")
+            span.source {{ messageInput.source }}:
+            span.content {{ messageInput.content }}
+            span.timestamp {{ new Date(messageInput.timestamp).toLocaleTimeString() }}
 </template>
 
 <script setup>
-import { inject, nextTick, ref, watchEffect } from 'vue'
+import {inject, nextTick, ref, watchEffect} from 'vue'
+import {defaultGroup} from '../subscriptions.js'
 
 const messages = inject('messages')
 const targetSelected = inject('targetSelected')
@@ -19,24 +20,24 @@ const localMessages = ref([])
 const lastMessage = ref(null)
 
 const setLastMessageRef = (el) => {
-  if (el) {
-    lastMessage.value = el
-  }
+    if (el) {
+        lastMessage.value = el
+    }
 }
 
 watchEffect(() => {
-  localMessages.value = messages.value.filter(
-    (message) =>
-      targetSelected.value?.name === 'All' ||
-      message.target === targetSelected.value?.name ||
-      message.source === targetSelected.value?.name
-  )
+    localMessages.value = messages.value.filter(
+        (message) =>
+            targetSelected.value?.name === defaultGroup ||
+            message.target === targetSelected.value?.name ||
+            message.source === targetSelected.value?.name
+    )
 
-  nextTick(() => {
-    if (lastMessage.value) {
-      lastMessage.value.scrollIntoView()
-    }
-  })
+    nextTick(() => {
+        if (lastMessage.value) {
+            lastMessage.value.scrollIntoView()
+        }
+    })
 })
 </script>
 
