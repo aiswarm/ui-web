@@ -53,7 +53,9 @@ export async function loadCurrentState() {
     `
   )
   onResult((result) => {
-    if (result.loading || result.error) return
+    if (result.loading || result.error) {
+      return
+    }
     groups.value = [{name: defaultGroup, members: []}]
     result.data.groups.forEach((group) => {
       groups.value.push({

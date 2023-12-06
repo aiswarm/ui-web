@@ -1,7 +1,7 @@
 <template lang="pug">
 v-card
-    GroupList
-    AgentList
+  GroupList
+  AgentList
 </template>
 
 <script setup>

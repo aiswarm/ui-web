@@ -1,15 +1,15 @@
 <template lang="pug">
 v-app
-    v-navigation-drawer(v-model="drawer" app)
-        Sidebar
-    v-main
-        v-container(fluid=true)
-            v-row
-                v-col(cols="12")
-                    v-row(height="100%" justify="center" align="center")
-                        ChatLog
-    v-footer(app).fixed.bottom
-        ChatBar
+  v-navigation-drawer(v-model="drawer" app)
+    Sidebar
+  v-main
+    v-container(fluid=true)
+      v-row
+        v-col(cols="12")
+          v-row(height="100%" justify="center" align="center")
+            ChatLog
+  v-footer(app).fixed.bottom
+    ChatBar
 </template>
 
 <script>
@@ -17,44 +17,44 @@ import Sidebar from './components/SideBar.vue'
 import ChatLog from './components/ChatLog.vue'
 import ChatBar from './components/ChatBar.vue'
 import {
-    agents,
-    defaultGroup,
-    drivers,
-    groups,
-    loadCurrentState,
-    message,
-    messages,
-    subscribeToAgents,
-    subscribeToGroups,
-    subscribeToMessages
+  agents,
+  defaultGroup,
+  drivers,
+  groups,
+  loadCurrentState,
+  message,
+  messages,
+  subscribeToAgents,
+  subscribeToGroups,
+  subscribeToMessages
 } from './subscriptions.js'
 import {provide, ref} from 'vue'
 
 export default {
-    components: {
-        Sidebar,
-        ChatLog,
-        ChatBar
-    },
-    setup() {
-        const targetSelected = ref({type: 'group', name: defaultGroup})
+  components: {
+    Sidebar,
+    ChatLog,
+    ChatBar
+  },
+  setup() {
+    const targetSelected = ref({type: 'group', name: defaultGroup})
 
-        loadCurrentState()
-        subscribeToGroups()
-        subscribeToAgents()
-        subscribeToMessages()
+    loadCurrentState()
+    subscribeToGroups()
+    subscribeToAgents()
+    subscribeToMessages()
 
-        provide('messages', messages)
-        provide('message', message)
-        provide('agents', agents)
-        provide('groups', groups)
-        provide('defaultGroup', defaultGroup)
-        provide('drivers', drivers)
-        provide('targetSelected', targetSelected)
-    },
-    data: () => ({
-        drawer: null
-    })
+    provide('messages', messages)
+    provide('message', message)
+    provide('agents', agents)
+    provide('groups', groups)
+    provide('defaultGroup', defaultGroup)
+    provide('drivers', drivers)
+    provide('targetSelected', targetSelected)
+  },
+  data: () => ({
+    drawer: null
+  })
 }
 </script>
 
