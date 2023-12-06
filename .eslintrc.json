@@ -13,6 +13,22 @@
     "plugin:vue/recommended"
   ],
   "rules": {
+    "indent": [
+      "error",
+      2
+    ],
+    "spaced-comment": [
+      "warn",
+      "always"
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
     "semi": [
       "error",
       "never"
