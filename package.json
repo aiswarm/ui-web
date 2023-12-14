@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "type": "module",
-  "keywords": [
-    "ai_so:plugin"
-  ],
+  "keywords": ["@aiswarm:plugin"],
   "author": "Ravi Gairola <mallox@pyxzl.net",
   "license": "MIT",
   "scripts": {
