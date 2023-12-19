@@ -17,7 +17,7 @@ export const groups = ref([{name: defaultGroup, members: []}])
 
 /**
  * A list of all drivers that have been created so far.
- * @type {Ref<Driver[]>}
+ * @type {Ref<AgentDriver[]>}
  */
 export const drivers = ref([])
 
@@ -37,6 +37,7 @@ export async function loadCurrentState() {
         }
         agents {
           name
+          status
         }
         drivers {
           type
@@ -48,6 +49,7 @@ export async function loadCurrentState() {
           target
           content
           type
+          status
         }
       }
     `
@@ -132,16 +134,16 @@ export function subscribeToGroups() {
 export const agent = ref(null)
 
 export function subscribeToAgents() {
-  const response = useSubscription(
+  const {onResult, onError} = useSubscription(
     gql`
       subscription {
         agentCreated {
           name
+          status
         }
       }
-    `
-  )
-  response.onResult((result) => {
+    `)
+  onResult((result) => {
     if (result.data?.agentCreated) {
       const newAgent = result.data.agentCreated
       if (!agents.value.find((agent) => agent.name === newAgent.name)) {
@@ -154,7 +156,31 @@ export function subscribeToAgents() {
       }
     }
   })
-  response.onError((error) => {
+  onError((error) => {
+    console.error(error)
+  })
+
+  const {onResult: onUpdateResult, onError: onUpdateError} = useSubscription(
+    gql`
+      subscription {
+        agentUpdated {
+          name
+          status
+        }
+      }
+    `)
+
+  onUpdateResult((result) => {
+    if (result.data?.agentUpdated) {
+      const updatedAgent = result.data.agentUpdated
+      const index = agents.value.findIndex((agent) => agent.name === updatedAgent.name)
+      if (index >= 0) {
+        agents.value[index] = updatedAgent
+      }
+    }
+  })
+
+  onUpdateError((error) => {
     console.error(error)
   })
 }
@@ -189,6 +215,35 @@ export function subscribeToMessages() {
     if (newMessageResult.value?.messageCreated) {
       messages.value.push(result.data.messageCreated)
       message.value = result.data.messageCreated
+    }
+  })
+
+  const {result: updatedMessageResult, onError: onUpdateError, onResult: onUpdateResult} = useSubscription(
+    gql`
+      subscription {
+        messageUpdated {
+          id
+          timestamp
+          source
+          target
+          content
+          type
+        }
+      }
+    `
+  )
+
+  onUpdateError((error) => {
+    console.error(error)
+  })
+
+  onUpdateResult((result) => {
+    if (updatedMessageResult.value?.messageUpdated) {
+      const updatedMessage = result.data.messageUpdated
+      const index = messages.value.findIndex((message) => message.id === updatedMessage.id)
+      if (index >= 0) {
+        messages.value[index] = updatedMessage
+      }
     }
   })
 }

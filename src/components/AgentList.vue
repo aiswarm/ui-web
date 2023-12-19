@@ -2,8 +2,8 @@
 h3 Agents
 v-list(v-if="agents.length")
   v-list-item(v-for="agent in agents" :key="agent.name" @click="selectAgent(agent.name)" :class="{ 'selected-chat': agent.name === targetSelected.name, badge: true }")
-    v-badge(v-if="agent.count > 0" :content="agent.count" floating=true offset-y="5" offset-x="-5" label="{{agent.name}}" color="#f0f0f0") {{ agent.name }}
-    span(v-else) {{ agent.name }}
+    v-badge(v-if="agent.count > 0" :content="agent.count" floating=true offset-y="5" offset-x="-5" label="{{agent.name}}" color="#f0f0f0") {{ agent.name }} ({{ agent.status }})
+    span(v-else) {{ agent.name }} ({{ agent.status }})
   v-list-item
     v-btn(icon="mdi-plus" @click="showAddAgentDialog = true" density="compact" )
     v-dialog(v-model="showAddAgentDialog" max-width="290")
