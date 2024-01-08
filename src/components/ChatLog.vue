@@ -5,7 +5,7 @@ div.chat-log
   ul(v-if="localMessages.length")
     li(v-for="(messageInput, index) in localMessages" :key="messageInput.id" :ref="setLastMessageRef")
       span.source {{ messageInput.source }}:
-      span.content {{ messageInput.content }}
+      span.content {{ messageInput.content }} ({{ messageInput.status }})
       span.timestamp {{ new Date(messageInput.timestamp).toLocaleTimeString() }}
 </template>
 

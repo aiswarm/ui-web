@@ -12,7 +12,8 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "test": "jest --coverage test/",
-    "postinstall": "test -d ./dist && echo \"Skipping postinstall\" || npm run build"
+    "postinstall": "test -d ./dist && echo \"Skipping postinstall\" || npm run build",
+    "link": "npm link ../api-graphql"
   },
   "dependencies": {
     "@apollo/client": "^3.8.7",
@@ -28,6 +29,9 @@
     "vue": "^3.2.13",
     "vue-router": "^4.0.13",
     "vuetify": "^3.4.2"
+  },
+  "peerDependencies": {
+    "@aiswarm/api-graphql": "^1.0.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.10",
