@@ -24,6 +24,7 @@ import {
   loadCurrentState,
   message,
   messages,
+  skills,
   subscribeToAgents,
   subscribeToGroups,
   subscribeToMessages
@@ -51,6 +52,7 @@ export default {
     provide('defaultGroup', defaultGroup)
     provide('drivers', drivers)
     provide('targetSelected', targetSelected)
+    provide('skills', skills)
   },
   data: () => ({
     drawer: null

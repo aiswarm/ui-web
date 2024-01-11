@@ -17,7 +17,7 @@ export const groups = ref([{name: defaultGroup, members: []}])
 
 /**
  * A list of all drivers that have been created so far.
- * @type {Ref<AgentDriver[]>}
+ * @type {Ref<String[]>}
  */
 export const drivers = ref([])
 
@@ -26,6 +26,12 @@ export const drivers = ref([])
  * @type {Ref<Message[]>}
  */
 export const messages = ref([])
+
+/**
+ * A list of all skills that are available to newly created agents.
+ * @type {Ref<String[]>}
+ */
+export const skills = ref([])
 
 export async function loadCurrentState() {
   const {onResult, onError} = useQuery(
@@ -50,6 +56,9 @@ export async function loadCurrentState() {
           content
           type
           status
+        }
+        skills {
+          name        
         }
       }
     `
@@ -81,6 +90,13 @@ export async function loadCurrentState() {
     drivers.value = drivers.value.sort().filter((item, index, array) => {
       return index === 0 || item !== array[index - 1]
     })
+
+    skills.value = []
+    result.data.skills.forEach((skill) => {
+      console.log(skill)
+      skills.value.push(skill.name)
+    })
+    skills.value.sort()
 
     for (const message of result.data.history) {
       messages.value.push(message)
@@ -202,6 +218,7 @@ export function subscribeToMessages() {
           target
           content
           type
+          status
         }
       }
     `
@@ -228,6 +245,7 @@ export function subscribeToMessages() {
           target
           content
           type
+          status
         }
       }
     `
