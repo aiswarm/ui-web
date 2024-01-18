@@ -7,7 +7,7 @@ div.chat-log
       span.source {{ messageInput.source }}:
       span.content {{ messageInput.content }}
       span.status
-        v-icon.mdi-spin(v-if="messageInput.status === 'processing'" :title="messageInput.status") mdi-loading
+        v-icon.mdi-spin(v-if="messageInput.status === 'processing' || messageInput.status === 'queued'" :title="messageInput.status") mdi-loading
         v-icon(v-if="messageInput.status === 'complete'" :title="messageInput.status") mdi-check
         v-icon(v-if="messageInput.status === 'error' || messageInput.status === 'cancelled'" :title="messageInput.status") mdi-close
       span.timestamp {{ new Date(messageInput.timestamp).toLocaleTimeString() }}
