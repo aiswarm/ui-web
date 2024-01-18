@@ -6,11 +6,11 @@ div.chat-log
     li(v-for="(messageInput, index) in localMessages" :key="messageInput.id" :ref="setLastMessageRef")
       span.source {{ messageInput.source }}:
       span.content {{ messageInput.content }}
+      span.timestamp {{ new Date(messageInput.timestamp).toLocaleTimeString() }}
       span.status
         v-icon.mdi-spin(v-if="messageInput.status === 'processing' || messageInput.status === 'queued'" :title="messageInput.status") mdi-loading
         v-icon(v-if="messageInput.status === 'complete'" :title="messageInput.status") mdi-check
         v-icon(v-if="messageInput.status === 'error' || messageInput.status === 'cancelled'" :title="messageInput.status") mdi-close
-      span.timestamp {{ new Date(messageInput.timestamp).toLocaleTimeString() }}
 </template>
 
 <script setup>
@@ -66,4 +66,9 @@ watchEffect(() => {
 .timestamp
   font-size 0.8em
   color gray
+
+.status
+  font-size 0.8em
+  color gray
+  font-align top
 </style>

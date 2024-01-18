@@ -3,7 +3,8 @@ h3 Agents
 v-list(v-if="agents.length")
   v-list-item(v-for="agent in agents" :key="agent.name" @click="selectAgent(agent.name)" :class="{ 'selected-chat': agent.name === targetSelected.name, badge: true }")
     v-list-item-content(style="display: flex; align-items: center;")
-      v-list-item-title {{ agent.name }}
+      span(v-if="agent.name === targetSelected.name" class="selected-chat") {{ agent.name }}
+      span(v-else) {{ agent.name }}
       v-icon(v-if="agent.status === 'idle'" :title="agent.status") mdi-check
       v-icon.mdi-spin(v-if="agent.status === 'busy'" :title="agent.status") mdi-loading
       v-icon(v-if="agent.status === 'error'" :title="agent.status") mdi-close
@@ -95,6 +96,4 @@ async function addAgent() {
     selectedSkills.value = []
   }
 }
-</script>
-
-<style lang="stylus"></style>
+</script><style lang="stylus"></style>
