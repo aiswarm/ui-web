@@ -5,7 +5,11 @@ div.chat-log
   ul(v-if="localMessages.length")
     li(v-for="(messageInput, index) in localMessages" :key="messageInput.id" :ref="setLastMessageRef")
       span.source {{ messageInput.source }}:
-      span.content {{ messageInput.content }} ({{ messageInput.status }})
+      span.content {{ messageInput.content }}
+      span.status
+        v-icon.mdi-spin(v-if="messageInput.status === 'processing'" :title="messageInput.status") mdi-loading
+        v-icon(v-if="messageInput.status === 'complete'" :title="messageInput.status") mdi-check
+        v-icon(v-if="messageInput.status === 'error' || messageInput.status === 'cancelled'" :title="messageInput.status") mdi-close
       span.timestamp {{ new Date(messageInput.timestamp).toLocaleTimeString() }}
 </template>
 
