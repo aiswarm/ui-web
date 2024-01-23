@@ -33,3 +33,12 @@ npm run build
 ```
 npm run lint
 ```
+
+## Recommended Setup for development with other plugins
+
+You will need to link the plugin to the other plugins you want to use. So that you can make changes and see them immediately without having to publish the plugin to npm.
+
+For this I recommend you create a new folder for the AI Swarm and clone all the plugins you want to use into it. Then link them together.
+
+Each plugin has `link` script defined in the `package.json` file if there are dependencies on other packages.
+You can run it with `npm run link` to link your code directly when you make changes.
