@@ -33,7 +33,7 @@
     "vuetify": "^3.4.2"
   },
   "peerDependencies": {
-    "@aiswarm/api-graphql": "^1.0.0"
+    "@aiswarm/api-graphql": "^0.1.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.10",
