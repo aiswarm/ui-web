@@ -4,16 +4,19 @@ v-app-bar(app color="primary" dark)
 div.chat-log
   ul(v-if="localMessages.length")
     li(v-for="(messageInput, index) in localMessages" :key="messageInput.id" :ref="setLastMessageRef")
-      span.source {{ messageInput.source }}:
-      span.content {{ messageInput.content }}
-      span.timestamp {{ new Date(messageInput.timestamp).toLocaleTimeString() }}
-      span.status
-        v-icon.mdi-spin(v-if="messageInput.status === 'processing' || messageInput.status === 'queued'" :title="messageInput.status") mdi-loading
-        v-icon(v-if="messageInput.status === 'complete'" :title="messageInput.status") mdi-check
-        v-icon(v-if="messageInput.status === 'error' || messageInput.status === 'cancelled'" :title="messageInput.status") mdi-close
-    li(v-if="skillStatus?.name != null")
-      v-icon mdi-progress-wrench
-      span.skill Executing skill {{ skillStatus.name }} with args {{ skillStatus.args }}
+      v-template(v-if="messageInput.type === 'string'")
+        span.source {{ messageInput.source }}:
+        span.content {{ messageInput.content }}
+        span.timestamp {{ new Date(messageInput.timestamp).toLocaleTimeString() }}
+        span.status
+          v-icon.mdi-spin(v-if="messageInput.status === 'processing' || messageInput.status === 'queued'" :title="messageInput.status") mdi-loading
+          v-icon(v-if="messageInput.status === 'complete'" :title="messageInput.status") mdi-check
+          v-icon(v-if="messageInput.status === 'error' || messageInput.status === 'cancelled'" :title="messageInput.status") mdi-close
+      v-template(v-else-if="messageInput.type === 'skill'")
+        span.skill Executing skill {{ messageInput.content }}
+          v-icon.mdi-spin(v-if="messageInput.status === 'processing'" :title="messageInput.status") mdi-progress-wrench
+          v-icon(v-if="messageInput.status === 'completed'" :title="messageInput.status") mdi-check
+          v-icon(v-if="messageInput.status === 'failed' || messageInput.status === 'cancelled'" :title="messageInput.status") mdi-close
 </template>
 
 <script setup>
@@ -26,7 +29,6 @@ const skillEvents = inject('skillEvents')
 
 const localMessages = ref([])
 const lastMessage = ref(null)
-const skillStatus = ref(null)
 
 const setLastMessageRef = (el) => {
   if (el) {
@@ -47,18 +49,6 @@ watchEffect(() => {
       lastMessage.value.scrollIntoView()
     }
   })
-})
-
-skillEvents.on('skillStarted', (agent, skill, args) => {
-  if (agent === targetSelected.value?.name) {
-    skillStatus.value = {name: skill, args}
-  }
-})
-
-skillEvents.on('skillCompleted', (agent, skill, args) => {
-  if (agent === targetSelected.value?.name) {
-    skillStatus.value = null
-  }
 })
 </script>
 
@@ -90,6 +80,8 @@ skillEvents.on('skillCompleted', (agent, skill, args) => {
   font-align top
 
 .skill
-  fint-size 0.5em
+  font-size 0.8em
   color gray
+  font-align top
+  padding-left 10px
 </style>
