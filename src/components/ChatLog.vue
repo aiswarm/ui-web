@@ -11,6 +11,9 @@ div.chat-log
         v-icon.mdi-spin(v-if="messageInput.status === 'processing' || messageInput.status === 'queued'" :title="messageInput.status") mdi-loading
         v-icon(v-if="messageInput.status === 'complete'" :title="messageInput.status") mdi-check
         v-icon(v-if="messageInput.status === 'error' || messageInput.status === 'cancelled'" :title="messageInput.status") mdi-close
+    li(v-if="skillStatus?.name != null")
+      v-icon mdi-progress-wrench
+      span.skill Executing skill {{ skillStatus.name }} with args {{ skillStatus.args }}
 </template>
 
 <script setup>
@@ -19,9 +22,11 @@ import {defaultGroup} from '../subscriptions.js'
 
 const messages = inject('messages')
 const targetSelected = inject('targetSelected')
+const skillEvents = inject('skillEvents')
 
 const localMessages = ref([])
 const lastMessage = ref(null)
+const skillStatus = ref(null)
 
 const setLastMessageRef = (el) => {
   if (el) {
@@ -42,6 +47,18 @@ watchEffect(() => {
       lastMessage.value.scrollIntoView()
     }
   })
+})
+
+skillEvents.on('skillStarted', (agent, skill, args) => {
+  if (agent === targetSelected.value?.name) {
+    skillStatus.value = {name: skill, args}
+  }
+})
+
+skillEvents.on('skillCompleted', (agent, skill, args) => {
+  if (agent === targetSelected.value?.name) {
+    skillStatus.value = null
+  }
 })
 </script>
 
@@ -71,4 +88,8 @@ watchEffect(() => {
   font-size 0.8em
   color gray
   font-align top
+
+.skill
+  fint-size 0.5em
+  color gray
 </style>

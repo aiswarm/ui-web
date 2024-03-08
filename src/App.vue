@@ -24,10 +24,12 @@ import {
   loadCurrentState,
   message,
   messages,
+  skillEvents,
   skills,
   subscribeToAgents,
   subscribeToGroups,
-  subscribeToMessages
+  subscribeToMessages,
+  subscribeToSkills
 } from './subscriptions.js'
 import {provide, ref} from 'vue'
 
@@ -44,6 +46,7 @@ export default {
     subscribeToGroups()
     subscribeToAgents()
     subscribeToMessages()
+    subscribeToSkills()
 
     provide('messages', messages)
     provide('message', message)
@@ -53,6 +56,7 @@ export default {
     provide('drivers', drivers)
     provide('targetSelected', targetSelected)
     provide('skills', skills)
+    provide('skillEvents', skillEvents)
   },
   data: () => ({
     drawer: null

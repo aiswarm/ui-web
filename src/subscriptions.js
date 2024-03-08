@@ -33,6 +33,28 @@ export const messages = ref([])
  */
 export const skills = ref([])
 
+function errorHandler(error) {
+  if (error.name === 'ApolloError') {
+    if (error.networkError?.originalError) {
+      console.error(error.networkError.originalError.name, error.networkError.originalError.originalError)
+    }
+    if (error.graphQLErrors.length) {
+      const messages = error.graphQLErrors.map((error) => error.message)
+      console.error('GraphQL Errors: ', messages)
+    }
+    if (error.protocolErrors.length) {
+      const messages = error.protocolErrors.map((error) => error.message)
+      console.error('Protocol Errors: ', messages)
+    }
+    if(error.clientErrors.length) {
+      const messages = error.clientErrors.map((error) => error.message)
+      console.error('Client Errors: ', messages)
+    }
+  } else {
+    console.error(error)
+  }
+}
+
 export async function loadCurrentState() {
   const {onResult, onError} = useQuery(
     gql`
@@ -93,7 +115,6 @@ export async function loadCurrentState() {
 
     skills.value = []
     result.data.skills.forEach((skill) => {
-      console.log(skill)
       skills.value.push(skill.name)
     })
     skills.value.sort()
@@ -102,9 +123,7 @@ export async function loadCurrentState() {
       messages.value.push(message)
     }
   })
-  onError((error) => {
-    console.error(error)
-  })
+  onError(errorHandler)
 }
 
 /**
@@ -138,9 +157,7 @@ export function subscribeToGroups() {
       }
     }
   })
-  onError((error) => {
-    console.error(error)
-  })
+  onError(errorHandler)
 }
 
 /**
@@ -172,9 +189,7 @@ export function subscribeToAgents() {
       }
     }
   })
-  onError((error) => {
-    console.error(error)
-  })
+  onError(errorHandler)
 
   const {onResult: onUpdateResult, onError: onUpdateError} = useSubscription(
     gql`
@@ -196,9 +211,7 @@ export function subscribeToAgents() {
     }
   })
 
-  onUpdateError((error) => {
-    console.error(error)
-  })
+  onUpdateError(errorHandler)
 }
 
 /**
@@ -224,9 +237,7 @@ export function subscribeToMessages() {
     `
   )
 
-  onError((error) => {
-    console.error(error)
-  })
+  onError(errorHandler)
 
   onResult((result) => {
     if (newMessageResult.value?.messageCreated) {
@@ -251,9 +262,7 @@ export function subscribeToMessages() {
     `
   )
 
-  onUpdateError((error) => {
-    console.error(error)
-  })
+  onUpdateError(errorHandler)
 
   onUpdateResult((result) => {
     if (updatedMessageResult.value?.messageUpdated) {
@@ -262,6 +271,52 @@ export function subscribeToMessages() {
       if (index >= 0) {
         messages.value[index] = updatedMessage
       }
+    }
+  })
+}
+
+/**
+ * A helper class that emits events when a skill is changing status based on backend events.
+ * @type {{listeners: {}, emit: skillEvents.emit, on: skillEvents.on}}
+ */
+export const skillEvents = {
+  listeners: {},
+  on: function(event, callback){
+    if (this.listeners[event]) {
+      this.listeners[event].push(callback)
+    } else {
+      this.listeners[event] = [callback]
+    }
+  },
+  emit: function(event, ...data)  {
+    if (this.listeners[event]) {
+      for (const listener of this.listeners[event]) {
+        listener(...data)
+      }
+    }
+  }
+}
+
+export function subscribeToSkills() {
+  const {result: skillStatusResult, onError, onResult} = useSubscription(
+    gql`
+      subscription {
+        skillStatus {
+          status
+          agent
+          skill
+          data
+        }
+      }
+    `)
+
+  onError(errorHandler)
+
+  onResult((result) => {
+    if (skillStatusResult.value?.skillStatus) {
+      const skillStatus = result.data.skillStatus
+      console.debug('Skill Status:', skillStatus)
+      skillEvents.emit(skillStatus.status, skillStatus.agent, skillStatus.skill, skillStatus.data)
     }
   })
 }
