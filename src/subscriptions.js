@@ -78,6 +78,10 @@ export async function loadCurrentState() {
           content
           type
           status
+          metadata {
+            key
+            value
+          }
         }
         skills {
           name        
@@ -232,6 +236,10 @@ export function subscribeToMessages() {
           content
           type
           status
+          metadata {
+            key
+            value
+          }
         }
       }
     `
@@ -257,6 +265,10 @@ export function subscribeToMessages() {
           content
           type
           status
+          metadata {
+            key
+            value
+          }
         }
       }
     `

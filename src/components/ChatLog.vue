@@ -4,7 +4,7 @@ v-app-bar(app color="primary" dark)
 div.chat-log
   ul(v-if="localMessages.length")
     li(v-for="(messageInput, index) in localMessages" :key="messageInput.id" :ref="setLastMessageRef")
-      v-template(v-if="messageInput.type === 'string'")
+      template(v-if="messageInput.type === 'string'")
         span.source {{ messageInput.source }}:
         span.content {{ messageInput.content }}
         span.timestamp {{ new Date(messageInput.timestamp).toLocaleTimeString() }}
@@ -12,11 +12,15 @@ div.chat-log
           v-icon.mdi-spin(v-if="messageInput.status === 'processing' || messageInput.status === 'queued'" :title="messageInput.status") mdi-loading
           v-icon(v-if="messageInput.status === 'complete'" :title="messageInput.status") mdi-check
           v-icon(v-if="messageInput.status === 'error' || messageInput.status === 'cancelled'" :title="messageInput.status") mdi-close
-      v-template(v-else-if="messageInput.type === 'skill'")
-        span.skill Executing skill {{ messageInput.content }}
+      template(v-else-if="messageInput.type === 'skill'")
+        div.skill Executing skill {{ messageInput.content }}
           v-icon.mdi-spin(v-if="messageInput.status === 'processing'" :title="messageInput.status") mdi-progress-wrench
           v-icon(v-if="messageInput.status === 'completed'" :title="messageInput.status") mdi-check
           v-icon(v-if="messageInput.status === 'failed' || messageInput.status === 'cancelled'" :title="messageInput.status") mdi-close
+          v-tooltip(activator="parent" location="bottom start" origin="auto" scroll-strategy="reposition" openOnHover)
+            div.param(v-for="(value, key) in messageInput.metadata", :key="key")
+              span.key {{ key }}:
+              span.value {{ value }}
 </template>
 
 <script setup>
@@ -29,6 +33,7 @@ const skillEvents = inject('skillEvents')
 
 const localMessages = ref([])
 const lastMessage = ref(null)
+const metadata = ref('')
 
 const setLastMessageRef = (el) => {
   if (el) {
@@ -42,7 +47,18 @@ watchEffect(() => {
       targetSelected.value?.name === defaultGroup ||
       message.target === targetSelected.value?.name ||
       message.source === targetSelected.value?.name
-  )
+  ).map((message) => {
+    if (message.type === 'skill') {
+      return {
+        ...message,
+        metadata: message.metadata.reduce((acc, {key, value}) => {
+          acc[key] = value
+          return acc
+        }, {})
+      }
+    }
+    return message
+  })
 
   nextTick(() => {
     if (lastMessage.value) {
@@ -84,4 +100,13 @@ watchEffect(() => {
   color gray
   font-align top
   padding-left 10px
+
+.param
+  font-size 0.9em
+
+  .key
+    font-weight bold
+
+  .value
+    margin-left 5px
 </style>
