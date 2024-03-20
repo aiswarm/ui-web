@@ -124,7 +124,9 @@ export async function loadCurrentState() {
     skills.value.sort()
 
     for (const message of result.data.history) {
-      messages.value.push(message)
+      if (!messages.value.find((m) => m.id === message.id)) {
+        messages.value.push(message)
+      }
     }
   })
   onError(errorHandler)

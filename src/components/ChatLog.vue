@@ -6,14 +6,14 @@ div.chat-log
     li.message(v-for="(messageInput, index) in localMessages" :key="messageInput.id" :ref="setLastMessageRef")
       template(v-if="messageInput.type === 'string'")
         template(v-if="messageInput.source === 'user'")
-          span.source.user {{ messageInput.source }}:
+          span.source.user {{ messageInput.source }}
         template(v-else-if="messageInput.source === targetSelected.name")
           template(v-if="messageInput.target === 'user'")
-            span.source.target {{ messageInput.source }}:
+            span.source.target {{ messageInput.source }}
           template(v-else)
-            span.source.target {{ messageInput.source }} -> {{ messageInput.target }}:
+            span.source.target {{ messageInput.source }} &rarr; {{ messageInput.target }}
         template(v-else)
-          span.source.other {{ messageInput.source }}: -> {{ messageInput.target }}:
+          span.source.other {{ messageInput.source }} &rarr; {{ messageInput.target }}
         span.content(v-html="messageInput.content")
         span.timestamp {{ new Date(messageInput.timestamp).toLocaleTimeString() }}
         span.status
@@ -44,7 +44,6 @@ const skillEvents = inject('skillEvents')
 
 const localMessages = ref([])
 const lastMessage = ref(null)
-const metadata = ref('')
 
 const setLastMessageRef = (el) => {
   if (el) {
@@ -53,34 +52,29 @@ const setLastMessageRef = (el) => {
 }
 
 watchEffect(() => {
-  localMessages.value = messages.value.filter(
-    (message) =>
+  localMessages.value = messages.value
+    .filter((message) =>
       targetSelected.value?.name === defaultGroup ||
       message.target === targetSelected.value?.name ||
       message.source === targetSelected.value?.name
-  ).map((message) => {
-    if (message.type === 'skill') {
+    )
+    .map((message) => {
+      if (message.type === 'skill') {
+        return {
+          ...message,
+          metadata: message.metadata.reduce((acc, {key, value}) => {
+            acc[key] = value
+            return acc
+          }, {})
+        }
+      }
+      // else
       return {
         ...message,
-        metadata: message.metadata.reduce((acc, {key, value}) => {
-          acc[key] = value
-          return acc
-        }, {})
+        content: formatContent(message.content)
       }
-    }
-    return {
-      ...message,
-      content: formatContent(message.content)
-    }
-  })
-
-  function formatContent(content) {
-    let result = ''
-    content.split('\n\n').forEach((line, index) => {
-      result += `<p>${line.replace(boldRegexp, '<strong>$1</strong>').replace(italicRegexp, '<i>$1</i>')}</p>`
     })
-    return result
-  }
+    .sort((a, b) => a.timestamp - b.timestamp)
 
   nextTick(() => {
     if (lastMessage.value) {
@@ -88,6 +82,15 @@ watchEffect(() => {
     }
   })
 })
+
+
+function formatContent(content) {
+  let result = ''
+  content.split('\n\n').forEach((line, index) => {
+    result += `<p>${line.replace(boldRegexp, '<strong>$1</strong>').replace(italicRegexp, '<i>$1</i>')}</p>`
+  })
+  return result
+}
 </script>
 
 <style lang="stylus">
@@ -102,6 +105,8 @@ watchEffect(() => {
 .source
   font-weight bold
   margin-right 10px
+  width 100px
+  text-align right
   &.user
     color #2b8cbe
   &.target
