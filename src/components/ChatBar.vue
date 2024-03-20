@@ -81,9 +81,12 @@ async function handleEnter(event) {
 
 <style lang="stylus">
 .btn
-  margin-bottom 25px
+  margin-bottom 5px
   margin-left 10px
 
 .scrollOnMessageTitle
   margin-top 8px
+
+.v-input__details
+  display none !important
 </style>

@@ -3,10 +3,15 @@ v-app-bar(app color="primary" dark)
   v-toolbar-title {{ targetSelected?.name || defaultGroup }}
 div.chat-log
   ul(v-if="localMessages.length")
-    li(v-for="(messageInput, index) in localMessages" :key="messageInput.id" :ref="setLastMessageRef")
+    li.message(v-for="(messageInput, index) in localMessages" :key="messageInput.id" :ref="setLastMessageRef")
       template(v-if="messageInput.type === 'string'")
-        span.source {{ messageInput.source }}:
-        span.content {{ messageInput.content }}
+        template(v-if="messageInput.source === 'user'")
+          span.source.user {{ messageInput.source }}:
+        template(v-else-if="messageInput.source === targetSelected.name")
+          span.source.target {{ messageInput.source }}:
+        template(v-else)
+          span.source.other {{ messageInput.source }}:
+        span.content(v-html="messageInput.content")
         span.timestamp {{ new Date(messageInput.timestamp).toLocaleTimeString() }}
         span.status
           v-icon.mdi-spin(v-if="messageInput.status === 'processing' || messageInput.status === 'queued'" :title="messageInput.status") mdi-loading
@@ -26,6 +31,9 @@ div.chat-log
 <script setup>
 import {inject, nextTick, ref, watchEffect} from 'vue'
 import {defaultGroup} from '../subscriptions.js'
+
+const boldRegexp = new RegExp(/\*\*([^*]+)\*\*/g)
+const italicRegexp = new RegExp(/`([^`]+)`/g)
 
 const messages = inject('messages')
 const targetSelected = inject('targetSelected')
@@ -57,8 +65,19 @@ watchEffect(() => {
         }, {})
       }
     }
-    return message
+    return {
+      ...message,
+      content: formatContent(message.content)
+    }
   })
+
+  function formatContent(content) {
+    let result = ''
+    content.split('\n\n').forEach((line, index) => {
+      result += `<p>${line.replace(boldRegexp, '<strong>$1</strong>').replace(italicRegexp, '<i>$1</i>')}</p>`
+    })
+    return result
+  }
 
   nextTick(() => {
     if (lastMessage.value) {
@@ -70,21 +89,30 @@ watchEffect(() => {
 
 <style lang="stylus">
 .chat-log
-  bottom 0
-  padding-bottom 100px
-  overflow-y auto
+  margin-top 80px
   scroll-behavior smooth
-  height 100%
+
+.message
+  flex-direction row
   display flex
-  flex-direction column-reverse
-  position fixed
 
 .source
   font-weight bold
   margin-right 10px
+  &.user
+    color #2b8cbe
+  &.target
+    color #b93232
+  &.other
+    color #666
 
 .content
   margin-right 10px
+  margin-bottom 0.5em
+  display inline-block
+  max-width 924px
+  p
+    margin-bottom 0.5em
 
 .timestamp
   font-size 0.8em
