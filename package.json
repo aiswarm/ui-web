@@ -7,7 +7,7 @@
   "keywords": [
     "@aiswarm:plugin"
   ],
-  "author": "Ravi Gairola <mallox@pyxzl.net",
+  "author": "Ravi Gairola <mallox@pyxzl.net>",
   "license": "MIT",
   "scripts": {
     "serve": "vue-cli-service serve",
