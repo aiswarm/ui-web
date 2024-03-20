@@ -8,9 +8,12 @@ div.chat-log
         template(v-if="messageInput.source === 'user'")
           span.source.user {{ messageInput.source }}:
         template(v-else-if="messageInput.source === targetSelected.name")
-          span.source.target {{ messageInput.source }}:
+          template(v-if="messageInput.target === 'user'")
+            span.source.target {{ messageInput.source }}:
+          template(v-else)
+            span.source.target {{ messageInput.source }} -> {{ messageInput.target }}:
         template(v-else)
-          span.source.other {{ messageInput.source }}:
+          span.source.other {{ messageInput.source }}: -> {{ messageInput.target }}:
         span.content(v-html="messageInput.content")
         span.timestamp {{ new Date(messageInput.timestamp).toLocaleTimeString() }}
         span.status
