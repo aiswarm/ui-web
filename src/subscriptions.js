@@ -284,6 +284,8 @@ export function subscribeToMessages() {
       const index = messages.value.findIndex((message) => message.id === updatedMessage.id)
       if (index >= 0) {
         messages.value[index] = updatedMessage
+      } else {
+        messages.value.push(updatedMessage)
       }
     }
   })
@@ -329,7 +331,6 @@ export function subscribeToSkills() {
   onResult((result) => {
     if (skillStatusResult.value?.skillStatus) {
       const skillStatus = result.data.skillStatus
-      console.debug('Skill Status:', skillStatus)
       skillEvents.emit(skillStatus.status, skillStatus.agent, skillStatus.skill, skillStatus.data)
     }
   })

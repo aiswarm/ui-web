@@ -23,8 +23,8 @@ div.chat-log
       template(v-else-if="messageInput.type === 'skill'")
         div.skill Executing skill {{ messageInput.content }}
           v-icon.mdi-spin(v-if="messageInput.status === 'processing'" :title="messageInput.status") mdi-progress-wrench
-          v-icon(v-if="messageInput.status === 'completed'" :title="messageInput.status") mdi-check
-          v-icon(v-if="messageInput.status === 'failed' || messageInput.status === 'cancelled'" :title="messageInput.status") mdi-close
+          v-icon(v-if="messageInput.status === 'complete'" :title="messageInput.status") mdi-check
+          v-icon(v-if="messageInput.status === 'error' || messageInput.status === 'cancelled'" :title="messageInput.status") mdi-close
           v-tooltip(activator="parent" location="bottom start" origin="auto" scroll-strategy="reposition" openOnHover)
             div.param(v-for="(value, key) in messageInput.metadata", :key="key")
               span.key {{ key }}:
