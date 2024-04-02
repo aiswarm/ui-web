@@ -251,7 +251,12 @@ export function subscribeToMessages() {
 
   onResult((result) => {
     if (newMessageResult.value?.messageCreated) {
-      messages.value.push(result.data.messageCreated)
+      const index = messages.value.findIndex((message) => message.id === result.data.messageCreated.id)
+      if (index >= 0) { // streamed messages will already have been created with the messageUpdate event
+        messages.value[index] = result.data.messageCreated
+      } else {
+        messages.value.push(result.data.messageCreated)
+      }
       message.value = result.data.messageCreated
     }
   })

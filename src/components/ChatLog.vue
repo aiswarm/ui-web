@@ -11,7 +11,8 @@ div.chat-log
           template(v-if="messageInput.target === 'user'")
             span.source.target {{ messageInput.source }}
           template(v-else)
-            span.source.target {{ messageInput.source }} &rarr; {{ messageInput.target }}
+            span.source.target {{ messageInput.source }}
+            span.source.other &rarr; {{ messageInput.target }}
         template(v-else)
           span.source.other {{ messageInput.source }} &rarr; {{ messageInput.target }}
         span.content(v-html="messageInput.content")
