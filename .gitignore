@@ -1,11 +1,13 @@
 .DS_Store
+.history/
 node_modules
 coverage/
 dist/
 
 # local env files
-.env.local
-.env.*.local
+.env
+.env.*
+!.env.example
 
 # Log files
 npm-debug.log*
