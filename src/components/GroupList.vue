@@ -19,51 +19,48 @@ v-list(v-if="groups.length")
 </template>
 
 <script setup>
-import {inject, ref, watch} from 'vue'
-import {useMutation} from '@vue/apollo-composable'
-import {gql} from '@apollo/client/core'
+import { inject, ref, watch } from 'vue'
+import { useMutation } from '@vue/apollo-composable'
+import { gql } from '@apollo/client/core'
 
 const targetSelected = inject('targetSelected')
 const groups = inject('groups')
 const message = inject('message')
 
-watch(message,
-  (message) => {
-    const group = groups.value.find((group) => group.name === message.target)
-    if (!group) {
-      return
-    }
-    if (targetSelected.value.name !== message.target) {
-      group.count++
-    }
-  })
+watch(message, message => {
+  const group = groups.value.find(group => group.name === message.target)
+  if (!group) {
+    return
+  }
+  if (targetSelected.value.name !== message.target) {
+    group.count++
+  }
+})
 
 /**
  *  Select a group and resets the count of unread messages.
  * @param {string} name
  */
-const selectGroup = (name) => {
-  targetSelected.value = {name, type: 'group'}
-  const group = groups.value.find((group) => group.name === name)
+const selectGroup = name => {
+  targetSelected.value = { name, type: 'group' }
+  const group = groups.value.find(group => group.name === name)
   if (group) {
     group.count = 0
   }
 }
 
-const {mutate: addGroupMutation} = useMutation(
-  gql`
-    mutation CreateGroup($name: String!) {
-      createGroup(name: $name)
-    }
-  `
-)
+const { mutate: addGroupMutation } = useMutation(gql`
+  mutation CreateGroup($name: String!) {
+    createGroup(name: $name)
+  }
+`)
 
 const showAddGroupDialog = ref(false)
 const newGroupName = ref('')
 
 async function addGroup() {
   if (newGroupName.value.trim() !== '') {
-    await addGroupMutation({name: newGroupName.value})
+    await addGroupMutation({ name: newGroupName.value })
     showAddGroupDialog.value = false
     newGroupName.value = ''
   }

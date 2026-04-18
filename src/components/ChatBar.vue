@@ -22,10 +22,10 @@ v-row(no-gutters align="end")
 </template>
 
 <script setup>
-import {inject, ref, watch} from 'vue'
-import {useMutation} from '@vue/apollo-composable'
-import {gql} from '@apollo/client/core'
-import {defaultGroup} from '../subscriptions.js'
+import { inject, ref, watch } from 'vue'
+import { useMutation } from '@vue/apollo-composable'
+import { gql } from '@apollo/client/core'
+import { defaultGroup } from '../subscriptions.js'
 
 const targetSelected = inject('targetSelected')
 const preferences = inject('preferences')
@@ -35,28 +35,23 @@ const menu = ref(false)
 const enabled = ref(true)
 const snackbar = ref(false)
 
-const {mutate: sendMessageMutation} = useMutation(
-  gql`
-    mutation SendMessage($message: String!, $target: String!) {
-      sendMessage(message: $message, target: $target) {
-        id
-        content
-      }
+const { mutate: sendMessageMutation } = useMutation(gql`
+  mutation SendMessage($message: String!, $target: String!) {
+    sendMessage(message: $message, target: $target) {
+      id
+      content
     }
-  `
-)
+  }
+`)
 
 async function sendMessage() {
-  if (
-    typeof messageInput?.value === 'string' &&
-    messageInput.value.trim() !== ''
-  ) {
-    await sendMessageMutation({message: messageInput.value, target: targetSelected.value.name})
+  if (typeof messageInput?.value === 'string' && messageInput.value.trim() !== '') {
+    await sendMessageMutation({ message: messageInput.value, target: targetSelected.value.name })
     messageInput.value = ''
   }
 }
 
-watch(targetSelected.value, (value) => {
+watch(targetSelected.value, value => {
   enabled.value = !(!value || value.name === defaultGroup)
 })
 
@@ -73,7 +68,7 @@ async function handleEnter(event) {
   }
   const message = messageInput.value
   if (message.trim && message.trim() !== '' && target) {
-    await sendMessageMutation({message, target})
+    await sendMessageMutation({ message, target })
     messageInput.value = ''
   }
 }

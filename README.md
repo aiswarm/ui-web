@@ -3,6 +3,7 @@
 [![Downloads](https://img.shields.io/npm/dm/%40aiswarm%2Fui-web.svg)](https://npmjs.com/package/%40aiswarm%2Fui-web)
 [![Issues](https://img.shields.io/github/issues-raw/aiswarm/ui-web)](https://github.com/aiswarm/ui-web/issues)
 [![Known Vulnerabilities](https://snyk.io/test/github/aiswarm/ui-web/badge.svg)](https://snyk.io/test/github/aiswarm/ui-web)
+
 # AI Swarm - UI-Web
 
 This is the web interface for the AI Swarm. It provides a way to monitor and interact with the agents and skills in the swarm.

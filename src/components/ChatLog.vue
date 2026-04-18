@@ -33,8 +33,8 @@ div.chat-log
 </template>
 
 <script setup>
-import {inject, nextTick, ref, watchEffect} from 'vue'
-import {defaultGroup} from '../subscriptions.js'
+import { inject, nextTick, ref, watchEffect } from 'vue'
+import { defaultGroup } from '../subscriptions.js'
 
 const boldRegexp = new RegExp(/\*\*([^*]+)\*\*/g)
 const italicRegexp = new RegExp(/`([^`]+)`/g)
@@ -46,7 +46,7 @@ const skillEvents = inject('skillEvents')
 const localMessages = ref([])
 const lastMessage = ref(null)
 
-const setLastMessageRef = (el) => {
+const setLastMessageRef = el => {
   if (el) {
     lastMessage.value = el
   }
@@ -54,16 +54,17 @@ const setLastMessageRef = (el) => {
 
 watchEffect(() => {
   localMessages.value = messages.value
-    .filter((message) =>
-      targetSelected.value?.name === defaultGroup ||
-      message.target === targetSelected.value?.name ||
-      message.source === targetSelected.value?.name
+    .filter(
+      message =>
+        targetSelected.value?.name === defaultGroup ||
+        message.target === targetSelected.value?.name ||
+        message.source === targetSelected.value?.name
     )
-    .map((message) => {
+    .map(message => {
       if (message.type === 'skill') {
         return {
           ...message,
-          metadata: message.metadata.reduce((acc, {key, value}) => {
+          metadata: message.metadata.reduce((acc, { key, value }) => {
             acc[key] = value
             return acc
           }, {})
@@ -83,7 +84,6 @@ watchEffect(() => {
     }
   })
 })
-
 
 function formatContent(content) {
   let result = ''

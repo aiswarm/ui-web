@@ -1,12 +1,12 @@
-import {createApp, reactive} from 'vue'
-import {ApolloClient, HttpLink, InMemoryCache, split} from '@apollo/client'
-import {getMainDefinition} from '@apollo/client/utilities'
-import {WebSocketLink} from '@apollo/link-ws'
-import {DefaultApolloClient} from '@vue/apollo-composable'
-import App from './App.vue'
-import {createVuetify} from 'vuetify'
+import { createApp, reactive } from 'vue'
+import { ApolloClient, HttpLink, InMemoryCache, split } from '@apollo/client'
+import { getMainDefinition } from '@apollo/client/utilities'
+import { WebSocketLink } from '@apollo/link-ws'
+import { DefaultApolloClient } from '@vue/apollo-composable'
+import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import App from './App.vue'
 import 'vuetify/dist/vuetify.min.css'
 import '@mdi/font/css/materialdesignicons.css'
 
@@ -20,7 +20,7 @@ const wsLink = new WebSocketLink({
   uri: 'ws://localhost:4000/graphql',
   options: {
     reconnect: true,
-    connectionCallback: (error) => {
+    connectionCallback: error => {
       if (error) {
         console.error(`WebSocket connection error: ${error}`)
       }
@@ -34,12 +34,9 @@ const wsLink = new WebSocketLink({
  */
 const splitLink = split(
   // split based on operation type
-  ({query}) => {
+  ({ query }) => {
     const definition = getMainDefinition(query)
-    return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
-    )
+    return definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
   },
   wsLink,
   httpLink

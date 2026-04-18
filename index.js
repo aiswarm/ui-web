@@ -4,12 +4,12 @@
  */
 
 import path from 'path'
+import { promisify } from 'util'
+import fs from 'fs'
+import { execSync } from 'child_process'
 import polka from 'polka'
 import sirv from 'sirv'
 import cors from 'cors'
-import {promisify} from 'util'
-import fs from 'fs'
-import {execSync} from 'child_process'
 
 export async function startServer(log, port = 3000) {
   const app = polka()
@@ -28,7 +28,7 @@ export async function startServer(log, port = 3000) {
       app.use(sirv(staticGlobalDir))
     } else {
       throw new Error(
-        'Could not find UI files, please run \'npm run build\' in the ui-web directory first.'
+        "Could not find UI files, please run 'npm run build' in the ui-web directory first."
       )
     }
   }
@@ -54,7 +54,7 @@ function getGlobalNodeModulesPath(log) {
  */
 export function initialize(api) {
   const config = api.config.web ?? {}
-  startServer(api.log, config.port).catch((err) => {
+  startServer(api.log, config.port).catch(err => {
     api.log.error(err)
     throw new Error(err)
   })

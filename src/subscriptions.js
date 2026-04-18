@@ -1,6 +1,6 @@
-import {ref} from 'vue'
-import {useQuery, useSubscription} from '@vue/apollo-composable'
-import {gql} from '@apollo/client/core'
+import { ref } from 'vue'
+import { useQuery, useSubscription } from '@vue/apollo-composable'
+import { gql } from '@apollo/client/core'
 
 export const defaultGroup = 'All'
 /**
@@ -13,7 +13,7 @@ export const agents = ref([])
  *  A list of all groups that have been created so far.
  * @type {Ref<Group[]>}
  */
-export const groups = ref([{name: defaultGroup, members: []}])
+export const groups = ref([{ name: defaultGroup, members: [] }])
 
 /**
  * A list of all drivers that have been created so far.
@@ -36,18 +36,21 @@ export const skills = ref([])
 function errorHandler(error) {
   if (error.name === 'ApolloError') {
     if (error.networkError?.originalError) {
-      console.error(error.networkError.originalError.name, error.networkError.originalError.originalError)
+      console.error(
+        error.networkError.originalError.name,
+        error.networkError.originalError.originalError
+      )
     }
     if (error.graphQLErrors.length) {
-      const messages = error.graphQLErrors.map((error) => error.message)
+      const messages = error.graphQLErrors.map(error => error.message)
       console.error('GraphQL Errors: ', messages)
     }
     if (error.protocolErrors.length) {
-      const messages = error.protocolErrors.map((error) => error.message)
+      const messages = error.protocolErrors.map(error => error.message)
       console.error('Protocol Errors: ', messages)
     }
-    if(error.clientErrors.length) {
-      const messages = error.clientErrors.map((error) => error.message)
+    if (error.clientErrors.length) {
+      const messages = error.clientErrors.map(error => error.message)
       console.error('Client Errors: ', messages)
     }
   } else {
@@ -56,45 +59,43 @@ function errorHandler(error) {
 }
 
 export async function loadCurrentState() {
-  const {onResult, onError} = useQuery(
-    gql`
-      query {
-        groups {
-          name
-          members
-        }
-        agents {
-          name
-          status
-        }
-        drivers {
-          type
-        }
-        history {
-          id
-          timestamp
-          source
-          target
-          content
-          type
-          status
-          metadata {
-            key
-            value
-          }
-        }
-        skills {
-          name        
+  const { onResult, onError } = useQuery(gql`
+    query {
+      groups {
+        name
+        members
+      }
+      agents {
+        name
+        status
+      }
+      drivers {
+        type
+      }
+      history {
+        id
+        timestamp
+        source
+        target
+        content
+        type
+        status
+        metadata {
+          key
+          value
         }
       }
-    `
-  )
-  onResult((result) => {
+      skills {
+        name
+      }
+    }
+  `)
+  onResult(result => {
     if (result.loading || result.error) {
       return
     }
-    groups.value = [{name: defaultGroup, members: []}]
-    result.data.groups.forEach((group) => {
+    groups.value = [{ name: defaultGroup, members: [] }]
+    result.data.groups.forEach(group => {
       groups.value.push({
         ...group,
         members: group.members.toSorted(),
@@ -102,14 +103,14 @@ export async function loadCurrentState() {
       })
     })
     agents.value = []
-    result.data.agents.forEach((agent) => {
+    result.data.agents.forEach(agent => {
       agents.value.push({
         ...agent,
         count: 0
       })
     })
     drivers.value = []
-    result.data.drivers.forEach((driver) => {
+    result.data.drivers.forEach(driver => {
       drivers.value.push(driver.type)
     })
     // Remove duplicates
@@ -118,13 +119,13 @@ export async function loadCurrentState() {
     })
 
     skills.value = []
-    result.data.skills.forEach((skill) => {
+    result.data.skills.forEach(skill => {
       skills.value.push(skill.name)
     })
     skills.value.sort()
 
     for (const message of result.data.history) {
-      if (!messages.value.find((m) => m.id === message.id)) {
+      if (!messages.value.find(m => m.id === message.id)) {
         messages.value.push(message)
       }
     }
@@ -139,20 +140,18 @@ export async function loadCurrentState() {
 export const group = ref(null)
 
 export function subscribeToGroups() {
-  const {onResult, onError} = useSubscription(
-    gql`
-      subscription {
-        groupCreated {
-          name
-          members
-        }
+  const { onResult, onError } = useSubscription(gql`
+    subscription {
+      groupCreated {
+        name
+        members
       }
-    `
-  )
-  onResult((result) => {
+    }
+  `)
+  onResult(result => {
     if (result.data?.groupCreated) {
       const newGroup = result.data.groupCreated
-      if (!groups.value.find((group) => group.name === newGroup.name)) {
+      if (!groups.value.find(group => group.name === newGroup.name)) {
         const clientGroup = {
           ...newGroup,
           members: newGroup.members.toSorted(),
@@ -173,19 +172,18 @@ export function subscribeToGroups() {
 export const agent = ref(null)
 
 export function subscribeToAgents() {
-  const {onResult, onError} = useSubscription(
-    gql`
-      subscription {
-        agentCreated {
-          name
-          status
-        }
+  const { onResult, onError } = useSubscription(gql`
+    subscription {
+      agentCreated {
+        name
+        status
       }
-    `)
-  onResult((result) => {
+    }
+  `)
+  onResult(result => {
     if (result.data?.agentCreated) {
       const newAgent = result.data.agentCreated
-      if (!agents.value.find((agent) => agent.name === newAgent.name)) {
+      if (!agents.value.find(agent => agent.name === newAgent.name)) {
         const clientAgent = {
           ...newAgent,
           count: 0
@@ -197,20 +195,19 @@ export function subscribeToAgents() {
   })
   onError(errorHandler)
 
-  const {onResult: onUpdateResult, onError: onUpdateError} = useSubscription(
-    gql`
-      subscription {
-        agentUpdated {
-          name
-          status
-        }
+  const { onResult: onUpdateResult, onError: onUpdateError } = useSubscription(gql`
+    subscription {
+      agentUpdated {
+        name
+        status
       }
-    `)
+    }
+  `)
 
-  onUpdateResult((result) => {
+  onUpdateResult(result => {
     if (result.data?.agentUpdated) {
       const updatedAgent = result.data.agentUpdated
-      const index = agents.value.findIndex((agent) => agent.name === updatedAgent.name)
+      const index = agents.value.findIndex(agent => agent.name === updatedAgent.name)
       if (index >= 0) {
         agents.value[index] = updatedAgent
       }
@@ -227,32 +224,37 @@ export function subscribeToAgents() {
 export const message = ref(null)
 
 export function subscribeToMessages() {
-  const {result: newMessageResult, onError, onResult} = useSubscription(
-    gql`
-      subscription {
-        messageCreated {
-          id
-          timestamp
-          source
-          target
-          content
-          type
-          status
-          metadata {
-            key
-            value
-          }
+  const {
+    result: newMessageResult,
+    onError,
+    onResult
+  } = useSubscription(gql`
+    subscription {
+      messageCreated {
+        id
+        timestamp
+        source
+        target
+        content
+        type
+        status
+        metadata {
+          key
+          value
         }
       }
-    `
-  )
+    }
+  `)
 
   onError(errorHandler)
 
-  onResult((result) => {
+  onResult(result => {
     if (newMessageResult.value?.messageCreated) {
-      const index = messages.value.findIndex((message) => message.id === result.data.messageCreated.id)
-      if (index >= 0) { // streamed messages will already have been created with the messageUpdate event
+      const index = messages.value.findIndex(
+        message => message.id === result.data.messageCreated.id
+      )
+      if (index >= 0) {
+        // streamed messages will already have been created with the messageUpdate event
         messages.value[index] = result.data.messageCreated
       } else {
         messages.value.push(result.data.messageCreated)
@@ -261,32 +263,34 @@ export function subscribeToMessages() {
     }
   })
 
-  const {result: updatedMessageResult, onError: onUpdateError, onResult: onUpdateResult} = useSubscription(
-    gql`
-      subscription {
-        messageUpdated {
-          id
-          timestamp
-          source
-          target
-          content
-          type
-          status
-          metadata {
-            key
-            value
-          }
+  const {
+    result: updatedMessageResult,
+    onError: onUpdateError,
+    onResult: onUpdateResult
+  } = useSubscription(gql`
+    subscription {
+      messageUpdated {
+        id
+        timestamp
+        source
+        target
+        content
+        type
+        status
+        metadata {
+          key
+          value
         }
       }
-    `
-  )
+    }
+  `)
 
   onUpdateError(errorHandler)
 
-  onUpdateResult((result) => {
+  onUpdateResult(result => {
     if (updatedMessageResult.value?.messageUpdated) {
       const updatedMessage = result.data.messageUpdated
-      const index = messages.value.findIndex((message) => message.id === updatedMessage.id)
+      const index = messages.value.findIndex(message => message.id === updatedMessage.id)
       if (index >= 0) {
         messages.value[index] = updatedMessage
       } else {
@@ -302,14 +306,14 @@ export function subscribeToMessages() {
  */
 export const skillEvents = {
   listeners: {},
-  on: function(event, callback){
+  on: function (event, callback) {
     if (this.listeners[event]) {
       this.listeners[event].push(callback)
     } else {
       this.listeners[event] = [callback]
     }
   },
-  emit: function(event, ...data)  {
+  emit: function (event, ...data) {
     if (this.listeners[event]) {
       for (const listener of this.listeners[event]) {
         listener(...data)
@@ -319,21 +323,24 @@ export const skillEvents = {
 }
 
 export function subscribeToSkills() {
-  const {result: skillStatusResult, onError, onResult} = useSubscription(
-    gql`
-      subscription {
-        skillStatus {
-          status
-          agent
-          skill
-          data
-        }
+  const {
+    result: skillStatusResult,
+    onError,
+    onResult
+  } = useSubscription(gql`
+    subscription {
+      skillStatus {
+        status
+        agent
+        skill
+        data
       }
-    `)
+    }
+  `)
 
   onError(errorHandler)
 
-  onResult((result) => {
+  onResult(result => {
     if (skillStatusResult.value?.skillStatus) {
       const skillStatus = result.data.skillStatus
       skillEvents.emit(skillStatus.status, skillStatus.agent, skillStatus.skill, skillStatus.data)

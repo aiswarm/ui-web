@@ -26,9 +26,9 @@ v-list(v-if="agents.length")
 </template>
 
 <script setup>
-import {inject, ref, watch} from 'vue'
-import {useMutation} from '@vue/apollo-composable'
-import {gql} from '@apollo/client/core'
+import { inject, ref, watch } from 'vue'
+import { useMutation } from '@vue/apollo-composable'
+import { gql } from '@apollo/client/core'
 
 const targetSelected = inject('targetSelected')
 const agents = inject('agents')
@@ -36,8 +36,8 @@ const drivers = inject('drivers')
 const message = inject('message')
 const skills = inject('skills')
 
-watch(message, (message) => {
-  const agent = agents.value.find((agent) => agent.name === message.target)
+watch(message, message => {
+  const agent = agents.value.find(agent => agent.name === message.target)
   if (!agent) {
     return
   }
@@ -46,24 +46,33 @@ watch(message, (message) => {
   }
 })
 
-
-const selectAgent = (name) => {
-  targetSelected.value = {name, type: 'agent'}
-  const agent = agents.value.find((agent) => agent.name === name)
+const selectAgent = name => {
+  targetSelected.value = { name, type: 'agent' }
+  const agent = agents.value.find(agent => agent.name === name)
   if (agent) {
     agent.count = 0
   }
 }
 
-const {mutate: addAgentMutation} = useMutation(
-  gql`
-    mutation CreateAgent($name: String!, $driver: String!, $description: String, $instructions: String, $skills: [String] ) {
-      createAgent(name: $name, driver: $driver, description: $description, instructions: $instructions, skills: $skills) {
-        name
-      }
+const { mutate: addAgentMutation } = useMutation(gql`
+  mutation CreateAgent(
+    $name: String!
+    $driver: String!
+    $description: String
+    $instructions: String
+    $skills: [String]
+  ) {
+    createAgent(
+      name: $name
+      driver: $driver
+      description: $description
+      instructions: $instructions
+      skills: $skills
+    ) {
+      name
     }
-  `
-)
+  }
+`)
 
 const showAddAgentDialog = ref(false)
 const newAgentName = ref('')
@@ -72,7 +81,7 @@ const newAgentInstructions = ref('')
 const selectedDriver = ref('')
 const selectedSkills = ref([])
 
-watch(showAddAgentDialog, (newValue) => {
+watch(showAddAgentDialog, newValue => {
   if (newValue && drivers.value.length === 1) {
     selectedDriver.value = drivers.value[0]
   }
@@ -95,4 +104,5 @@ async function addAgent() {
     selectedSkills.value = []
   }
 }
-</script><style lang="stylus"></style>
+</script>
+<style lang="stylus"></style>

@@ -13,6 +13,7 @@ v-app
 </template>
 
 <script>
+import { provide, ref } from 'vue'
 import Sidebar from './components/SideBar.vue'
 import ChatLog from './components/ChatLog.vue'
 import ChatBar from './components/ChatBar.vue'
@@ -31,7 +32,6 @@ import {
   subscribeToMessages,
   subscribeToSkills
 } from './subscriptions.js'
-import {provide, ref} from 'vue'
 
 export default {
   components: {
@@ -40,7 +40,7 @@ export default {
     ChatBar
   },
   setup() {
-    const targetSelected = ref({type: 'group', name: defaultGroup})
+    const targetSelected = ref({ type: 'group', name: defaultGroup })
 
     loadCurrentState()
     subscribeToGroups()
