@@ -1,6 +1,6 @@
 {
   "name": "@aiswarm/ui-web",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -47,7 +47,7 @@
     "vuetify": "^4.0.5"
   },
   "peerDependencies": {
-    "@aiswarm/api-graphql": "^0.1.9"
+    "@aiswarm/api-graphql": "^0.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

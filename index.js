@@ -52,10 +52,7 @@ function getGlobalNodeModulesPath(log) {
  * @param {API} api
  * @param {WebConfig} api.config.web The configuration object for the web server.
  */
-export function initialize(api) {
+export async function initialize(api) {
   const config = api.config.web ?? {}
-  startServer(api.log, config.port).catch(err => {
-    api.log.error(err)
-    throw new Error(err)
-  })
+  await startServer(api.log, config.port)
 }
