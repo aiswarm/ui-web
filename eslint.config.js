@@ -1,5 +1,5 @@
 import js from '@eslint/js'
-import importPlugin from 'eslint-plugin-import'
+import { importX } from 'eslint-plugin-import-x'
 import vue from 'eslint-plugin-vue'
 import vueParser from 'vue-eslint-parser'
 import prettierConfig from 'eslint-config-prettier'
@@ -11,7 +11,7 @@ export default [
   },
   js.configs.recommended,
   ...vue.configs['flat/recommended'],
-  importPlugin.flatConfigs.recommended,
+  importX.flatConfigs.recommended,
   {
     files: ['**/*.vue'],
     languageOptions: {
@@ -39,14 +39,14 @@ export default [
       curly: ['error', 'all'],
       'no-unused-vars': 'off',
       'no-console': 'off',
-      'import/extensions': [
+      'import-x/extensions': [
         'error',
         'ignorePackages',
         { js: 'always', mjs: 'always', vue: 'always' }
       ],
-      'import/no-unresolved': 'off',
-      'import/namespace': 'off',
-      'import/order': ['warn', { 'newlines-between': 'never' }]
+      'import-x/no-unresolved': 'off',
+      'import-x/namespace': 'off',
+      'import-x/order': ['warn', { 'newlines-between': 'never' }]
     }
   },
   prettierConfig

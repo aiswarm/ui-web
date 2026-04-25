@@ -4,21 +4,14 @@
  */
 
 import path from 'path'
-import { promisify } from 'util'
+import http from 'http'
 import { fileURLToPath } from 'url'
 import fs from 'fs'
-import polka from 'polka'
 import sirv from 'sirv'
-import cors from 'cors'
 
 const packageDir = path.dirname(fileURLToPath(import.meta.url))
 
 export async function startServer(log, port = 3000) {
-  const app = polka()
-
-  // Enable CORS for map origins
-  app.use(cors())
-
   /*
    * Serve static files from this package's `dist/`. Resolved relative to
    * this file rather than `process.cwd()` so launching the orchestrator
@@ -31,13 +24,29 @@ export async function startServer(log, port = 3000) {
       `Could not find UI files at ${staticDir}; run 'npm run build' in the ui-web directory first.`
     )
   }
-  app.use(sirv(staticDir))
 
-  // Start the server
-  const listen = promisify(app.listen).bind(app)
-  await listen(port)
+  /*
+   * sirv returns a (req, res, next) handler compatible with node:http.
+   * single-page-app fallback so client-side routes resolve to index.html.
+   */
+  const serve = sirv(staticDir, { single: true })
+  const server = http.createServer((req, res) => {
+    serve(req, res, () => {
+      res.statusCode = 404
+      res.end('Not found')
+    })
+  })
+
+  await new Promise((resolve, reject) => {
+    server.once('error', reject)
+    server.listen(port, () => {
+      server.off('error', reject)
+      resolve()
+    })
+  })
 
   log.info(`Web UI is available at http://localhost:${port}`)
+  return server
 }
 
 /**
