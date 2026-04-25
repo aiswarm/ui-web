@@ -298,6 +298,39 @@ export function subscribeToMessages() {
       }
     }
   })
+
+  /*
+   * Streaming deltas: ship only the new chunk, concat locally. The eventual
+   * messageUpdated (status flip to complete) replaces the in-place content
+   * with the authoritative server snapshot.
+   */
+  const {
+    result: appendedMessageResult,
+    onError: onAppendError,
+    onResult: onAppendResult
+  } = useSubscription(gql`
+    subscription {
+      messageAppended {
+        id
+        delta
+      }
+    }
+  `)
+
+  onAppendError(errorHandler)
+
+  onAppendResult(result => {
+    const payload = appendedMessageResult.value?.messageAppended
+    if (!payload) return
+    const { id, delta } = result.data.messageAppended
+    const index = messages.value.findIndex(message => message.id === id)
+    if (index >= 0) {
+      messages.value[index] = {
+        ...messages.value[index],
+        content: (messages.value[index].content ?? '') + delta
+      }
+    }
+  })
 }
 
 /**
